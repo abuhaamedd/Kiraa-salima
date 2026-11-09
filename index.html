@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>مكوّن الكلمات | ركّب واقرأ</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Baloo Bhaijaan 2','Cairo',sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(180deg,#7dd3fc 0%,#bae6fd 38%,#fef3c7 100%);min-height:100vh;overflow-x:hidden}
+.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.9;filter:blur(1px)}
+.tile{transition:all .18s cubic-bezier(.34,1.56,.64,1);cursor:pointer;user-select:none;box-shadow:0 6px 0 rgba(0,0,0,.18),0 10px 18px rgba(0,0,0,.15)}
+.tile:hover:not(.used){transform:translateY(-4px) scale(1.06) rotate(-1deg)}
+.tile:active:not(.used){transform:scale(.92)}
+.tile.used{opacity:.25;transform:scale(.88);filter:grayscale(.6);pointer-events:none;box-shadow:none}
+.slot-tile{animation:popIn .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{0%{transform:scale(.4) rotate(-8deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px) rotate(-1deg)}40%{transform:translateX(9px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+.shake{animation:shake .45s ease}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.floaty{animation:floaty 3s ease-in-out infinite}
+@keyframes bounceSoft{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.06)}}
+.bounceSoft{animation:bounceSoft 1.6s ease-in-out infinite}
+@keyframes confettiFall{0%{transform:translateY(-10vh) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.confetti{position:fixed;top:-40px;font-size:28px;z-index:9999;pointer-events:none;animation:confettiFall 2.4s linear forwards}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(250,204,21,.7)}50%{box-shadow:0 0 0 14px rgba(250,204,21,0)}}
+.glow{animation:pulseGlow 1.5s infinite}
+.reading-active{transform:scale(1.22) rotate(-3deg)!important;outline:4px solid #fff;box-shadow:0 0 0 6px #f59e0b,0 14px 24px rgba(0,0,0,.3)!important;z-index:2}
+.btn-press{transition:all .15s;box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.btn-press:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#38bdf8;border-radius:99px}
+</style>
+</head>
+<body class="relative">
+
+<!-- Decorative clouds -->
+<div class="cloud w-32 h-10 top-6 left-[8%]"></div>
+<div class="cloud w-24 h-8 top-20 right-[6%]"></div>
+<div class="cloud w-40 h-12 top-40 left-[4%] opacity-60"></div>
+<div class="fixed bottom-3 left-3 text-4xl opacity-70 floaty select-none pointer-events-none">🌳 🌻 🌳</div>
+<div class="fixed bottom-3 right-3 text-3xl opacity-70 floaty select-none pointer-events-none" style="animation-delay:1s">☀️ 🌈</div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen" class="relative z-10 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-2xl bg-white/95 backdrop-blur rounded-[2rem] shadow-2xl border-4 border-white p-5 md:p-8 text-center">
+    <div class="text-6xl md:text-7xl leading-none">🔤 🐠 📖</div>
+    <h1 class="text-4xl md:text-6xl font-black text-sky-700 mt-2 leading-tight">مكوّن الكلمات</h1>
+    <p class="text-lg md:text-2xl font-bold text-amber-600 mt-1">ركّب المقاطع الصوتية... واقرأ الكلمة قراءةً سليمة! 🎤</p>
+
+    <!-- Example -->
+    <div class="bg-gradient-to-l from-amber-50 to-sky-50 border-2 border-dashed border-amber-300 rounded-3xl p-4 mt-5">
+      <p class="font-black text-slate-600 text-sm md:text-base">💡 مثال: اضغط المقاطع بالترتيب الصحيح</p>
+      <div class="flex items-center justify-center gap-2 md:gap-3 mt-3 flex-wrap" dir="ltr">
+        <span class="tile bg-amber-400 text-white text-3xl md:text-4xl font-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center">سَ</span>
+        <span class="text-2xl font-black text-slate-400">+</span>
+        <span class="tile bg-emerald-400 text-white text-3xl md:text-4xl font-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center">مَ</span>
+        <span class="text-2xl font-black text-slate-400">+</span>
+        <span class="tile bg-sky-400 text-white text-3xl md:text-4xl font-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center">كَ</span>
+        <span class="text-2xl font-black text-slate-400">+</span>
+        <span class="tile bg-pink-400 text-white text-3xl md:text-4xl font-black w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center">ة</span>
+        <span class="text-3xl font-black">➡️</span>
+        <span class="bg-white shadow-lg rounded-2xl px-4 py-2 text-3xl md:text-4xl font-black text-slate-800 border-2 border-emerald-300">سَمَكَة 🐠</span>
+      </div>
+      <p class="mt-2 text-slate-500 font-bold text-sm">استمع لكل مقطع عند الضغط عليه، ثم اقرأ الكلمة كاملة!</p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 md:gap-3 mt-5 text-center">
+      <div class="bg-sky-100 rounded-2xl p-3"><div class="text-3xl">👆</div><p class="font-black text-sky-800 text-sm md:text-base leading-tight">١. اضغط<br>المقاطع</p></div>
+      <div class="bg-emerald-100 rounded-2xl p-3"><div class="text-3xl">🧩</div><p class="font-black text-emerald-800 text-sm md:text-base leading-tight">٢. كوّن<br>الكلمة</p></div>
+      <div class="bg-amber-100 rounded-2xl p-3"><div class="text-3xl">🗣️</div><p class="font-black text-amber-800 text-sm md:text-base leading-tight">٣. اقرأها<br>بصوت عالٍ</p></div>
+    </div>
+
+    <button id="playBtn" class="btn-press glow mt-6 bg-gradient-to-l from-emerald-500 to-green-500 hover:from-emerald-600 text-white text-3xl md:text-4xl font-black px-10 py-4 rounded-full w-full md:w-auto">▶ ابدأ اللعب</button>
+    <div class="flex justify-center gap-3 mt-4">
+      <button id="howBtn" class="btn-press bg-sky-500 text-white font-black px-5 py-2 rounded-full">🎧 جرّب الاستماع</button>
+      <button id="soundToggleStart" class="btn-press bg-slate-700 text-white font-black px-5 py-2 rounded-full">🔊 الصوت: يعمل</button>
+    </div>
+    <p class="text-slate-400 font-bold text-sm mt-4">١٠ كلمات • ٣ قلوب ❤️ • ٣ دقائق ⏱️ • كل إجابة صحيحة = نقاط + سلسلة 🔥</p>
+  </div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="gameScreen" class="relative z-10 hidden min-h-screen p-3 md:p-5 max-w-3xl mx-auto w-full">
+  <!-- HUD -->
+  <div class="bg-white/95 rounded-3xl shadow-xl p-3 md:p-4 flex flex-wrap items-center justify-between gap-2 border-2 border-white">
+    <div class="flex items-center gap-2 md:gap-3 flex-wrap">
+      <div class="bg-amber-400 text-white font-black px-3 py-1 rounded-full text-lg shadow">⭐ <span id="scoreVal">0</span></div>
+      <div id="heartsVal" class="text-xl md:text-2xl tracking-widest">❤️❤️❤️</div>
+      <div id="streakVal" class="hidden bg-orange-500 text-white font-black px-3 py-1 rounded-full">🔥 <span id="streakNum">0</span></div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="timerVal" class="bg-sky-500 text-white font-black px-3 py-1 rounded-full">⏱️ 3:00</div>
+      <button id="soundToggleGame" class="btn-press bg-slate-700 text-white w-10 h-10 rounded-full font-black">🔊</button>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="mt-3 bg-white/80 rounded-full p-1 shadow"><div class="flex justify-between text-xs font-black text-slate-600 px-2"><span>تقدّمك</span><span id="progressText">الكلمة 1 من 10</span></div><div class="h-4 bg-slate-200 rounded-full overflow-hidden mt-1"><div id="progressBar" class="h-full bg-gradient-to-l from-emerald-400 to-sky-500 rounded-full transition-all duration-500" style="width:10%"></div></div></div>
+
+  <!-- Main Card -->
+  <div id="mainCard" class="bg-white/95 rounded-[2rem] shadow-2xl mt-3 p-4 md:p-6 text-center border-4 border-white">
+    <div class="flex items-start justify-between gap-2">
+      <div id="emojiBig" class="text-7xl md:text-8xl bounceSoft leading-none">🐠</div>
+      <div class="text-left">
+        <p class="bg-violet-100 text-violet-700 font-black px-3 py-1 rounded-full text-sm">🎯 ركّب الكلمة!</p>
+        <p id="attemptText" class="text-slate-400 font-bold text-xs mt-1">محاولاتك: 0</p>
+      </div>
+    </div>
+    <h2 class="text-2xl md:text-3xl font-black text-slate-800 mt-1">ما هذه الكلمة؟ اضغط مقاطعها <span class="text-emerald-600">بالترتيب الصحيح</span> 👇</h2>
+
+    <!-- Slots -->
+    <p class="font-black text-slate-500 mt-4 text-sm">📍 مكان الكلمة:</p>
+    <div id="slotsArea" class="flex justify-center gap-2 md:gap-3 mt-2 min-h-[72px] flex-wrap"></div>
+
+    <!-- Pool -->
+    <p class="font-black text-slate-500 mt-4 text-sm">🧩 اختر من المقاطع (اضغط للاستماع):</p>
+    <div id="poolArea" class="flex justify-center gap-2 md:gap-3 mt-2 flex-wrap"></div>
+
+    <div id="feedbackText" class="mt-4 font-black text-lg md:text-xl min-h-[32px] text-slate-500">اختر المقطع الأول... هيا! 💪</div>
+
+    <!-- Controls -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+      <button id="checkBtn" class="btn-press col-span-2 md:col-span-1 bg-gradient-to-l from-emerald-500 to-green-500 text-white font-black text-xl py-3 rounded-2xl">✅ تحقّق</button>
+      <button id="undoBtn" class="btn-press bg-amber-400 text-white font-black text-lg py-3 rounded-2xl">↩️ تراجع</button>
+      <button id="clearBtn" class="btn-press bg-rose-400 text-white font-black text-lg py-3 rounded-2xl">🗑️ مسح</button>
+      <button id="hintBtn" class="btn-press bg-violet-500 text-white font-black text-lg py-3 rounded-2xl">💡 تلميح <span class="text-xs bg-white/30 px-1 rounded">-5</span></button>
+    </div>
+    <button id="listenBtn" class="btn-press mt-2 w-full bg-sky-500 text-white font-black text-lg py-3 rounded-2xl">🔊 استمع للمقاطع التي اخترتها</button>
+  </div>
+  <p class="text-center text-white font-black drop-shadow mt-3 text-sm">تلميح: اضغط أي مقطع لسماع صوته، واضغط خانة فارغة لإرجاعه</p>
+</div>
+
+<!-- ===== READING MODAL ===== -->
+<div id="readingModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-2xl p-5 md:p-7 text-center border-4 border-emerald-300 max-h-[92vh] overflow-y-auto">
+    <div class="text-5xl">🎉 أحسنت يا بطل! 🎉</div>
+    <h2 class="text-3xl font-black text-emerald-600 mt-1">الآن اقرأ الكلمة</h2>
+    <div id="readEmoji" class="text-8xl my-2 bounceSoft">🐠</div>
+    <div id="readWord" class="text-5xl md:text-6xl font-black text-slate-800 bg-amber-50 border-2 border-amber-200 rounded-3xl py-3 px-2">سَمَكَة</div>
+    <p class="font-black text-slate-500 mt-3">اضغط كل مقطع لقراءته، ثم اضغط «القراءة الكاملة»</p>
+    <div id="readChips" class="flex justify-center gap-2 md:gap-3 mt-3 flex-wrap"></div>
+    <div class="grid grid-cols-2 gap-2 mt-5">
+      <button id="fullReadBtn" class="btn-press bg-gradient-to-l from-sky-500 to-blue-600 text-white font-black text-xl py-3 rounded-2xl">🗣️ القراءة الكاملة</button>
+      <button id="nextBtn" class="btn-press bg-gradient-to-l from-emerald-500 to-green-500 text-white font-black text-xl py-3 rounded-2xl">التالي ➡️</button>
+    </div>
+    <p id="readScoreText" class="mt-3 font-black text-amber-600">+10 نقطة! ⭐</p>
+  </div>
+</div>
+
+<!-- ===== END SCREEN ===== -->
+<div id="endScreen" class="hidden relative z-10 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-xl bg-white/95 rounded-[2rem] shadow-2xl p-6 text-center border-4 border-white">
+    <div id="endEmoji" class="text-8xl">🏆</div>
+    <h2 id="endTitle" class="text-4xl font-black text-slate-800 mt-2">رائع!</h2>
+    <p id="endMsg" class="font-bold text-slate-500 text-lg mt-1">لقد تعلمت كلمات جديدة</p>
+    <div id="endStars" class="text-5xl mt-3 tracking-widest">⭐⭐⭐</div>
+    <div class="grid grid-cols-3 gap-2 mt-5">
+      <div class="bg-amber-100 rounded-2xl p-3"><p class="text-2xl font-black text-amber-700" id="finalScore">0</p><p class="font-black text-xs text-slate-500">نقطة ⭐</p></div>
+      <div class="bg-rose-100 rounded-2xl p-3"><p class="text-2xl font-black text-rose-600" id="finalHearts">3</p><p class="font-black text-xs text-slate-500">قلوب ❤️</p></div>
+      <div class="bg-orange-100 rounded-2xl p-3"><p class="text-2xl font-black text-orange-600" id="finalStreak">0</p><p class="font-black text-xs text-slate-500">أطول سلسلة 🔥</p></div>
+    </div>
+    <div class="mt-4 bg-emerald-50 border-2 border-dashed border-emerald-200 rounded-3xl p-3 text-right">
+      <p class="font-black text-emerald-700">📚 الكلمات التي قرأتها:</p>
+      <div id="learnedList" class="flex flex-wrap gap-2 mt-2"></div>
+    </div>
+    <button id="againBtn" class="btn-press mt-5 bg-gradient-to-l from-emerald-500 to-green-500 text-white text-2xl font-black px-8 py-3 rounded-full w-full">🔄 العب مرة أخرى</button>
+    <button id="menuBtn" class="btn-press mt-2 bg-sky-500 text-white font-black px-6 py-2 rounded-full">🏠 القائمة الرئيسية</button>
+  </div>
+</div>
+
+<script>
+// ---------- DATA ----------
+const WORDS=[
+ {word:"سَمَكَة",emoji:"🐠",syllables:["سَ","مَ","كَ","ة"]},
+ {word:"بَطَّة",emoji:"🦆",syllables:["بَ","طَ","ة"]},
+ {word:"قَمَر",emoji:"🌙",syllables:["قَ","مَ","رْ"]},
+ {word:"أَسَد",emoji:"🦁",syllables:["أَ","سَ","دْ"]},
+ {word:"كِتَاب",emoji:"📚",syllables:["كِ","تَا","بْ"]},
+ {word:"تُفَّاحَة",emoji:"🍎",syllables:["تُ","فَا","حَ","ة"]},
+ {word:"مَوْز",emoji:"🍌",syllables:["مَوْ","زْ"]},
+ {word:"قِطَّة",emoji:"🐱",syllables:["قِ","طَ","ة"]},
+ {word:"حِصَان",emoji:"🐴",syllables:["حِ","صَا","نْ"]},
+ {word:"دَجَاجَة",emoji:"🐔",syllables:["دَ","جَا","جَ","ة"]},
+ {word:"جَمَل",emoji:"🐪",syllables:["جَ","مَ","لْ"]},
+ {word:"فِيل",emoji:"🐘",syllables:["فِي","لْ"]},
+ {word:"بَيْت",emoji:"🏠",syllables:["بَ","يْ","تْ"]},
+ {word:"وَرْدَة",emoji:"🌹",syllables:["وَ","رْ","دَ","ة"]},
+ {word:"نَحْلَة",emoji:"🐝",syllables:["نَ","حْ","لَ","ة"]},
+ {word:"عَيْن",emoji:"👁️",syllables:["عَ","يْ","نْ"]},
+ {word:"شَمْس",emoji:"☀️",syllables:["شَ","مْ","سْ"]},
+ {word:"بَاب",emoji:"🚪",syllables:["بَا","بْ"]},
+ {word:"كَلْب",emoji:"🐶",syllables:["كَ","لْ","بْ"]},
+ {word:"نَجْمَة",emoji:"⭐",syllables:["نَ","جْ","مَ","ة"]}
+];
+const COLORS=["bg-amber-400","bg-emerald-400","bg-sky-400","bg-pink-400","bg-violet-400","bg-orange-400","bg-teal-400"];
+
+// ---------- STATE ----------
+let gameWords=[],round=0,score=0,hearts=3,streak=0,bestStreak=0,timeLeft=180,timerId=null,pool=[],selected=[],attempts=0,locked=false,learned=[],soundOn=true,hintUsed=false;
+
+// ---------- AUDIO ----------
+let audioCtx=null;
+function ensureAudio(){try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();}catch(e){}}
+function tone(f,d=0.12,type="sine",v=0.16,delay=0){if(!soundOn)return;ensureAudio();if(!audioCtx)return;const t=audioCtx.currentTime+delay;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+d+0.02);}
+const sClick=()=>tone(650,.07,"sine",.12);
+const sPlace=()=>{tone(520,.08,"sine",.14);tone(780,.09,"sine",.12,.06);};
+const sCorrect=()=>{[523,659,784,1046].forEach((f,i)=>tone(f,.18,"sine",.16,i*.09));};
+const sWrong=()=>{tone(220,.2,"sawtooth",.12);tone(160,.25,"sawtooth",.12,.12);};
+const sWin=()=>{[523,659,784,1046,784,1046,1318].forEach((f,i)=>tone(f,.22,"triangle",.16,i*.11));};
+
+// ---------- SPEECH ----------
+function speak(text,rate=0.82){if(!soundOn)return;if(!("speechSynthesis" in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="ar-SA";u.rate=rate;u.pitch=1.05;const vs=speechSynthesis.getVoices();const ar=vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith("ar"));if(ar)u.voice=ar;speechSynthesis.speak(u);}catch(e){}}
+if("speechSynthesis" in window) speechSynthesis.getVoices();
+
+// ---------- HELPERS ----------
+const $=id=>document.getElementById(id);
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function showScreen(name){["startScreen","gameScreen","endScreen"].forEach(s=>$(s).classList.toggle("hidden",s!==name));if(name==="gameScreen")$("gameScreen").classList.remove("hidden");else $("gameScreen").classList.toggle("hidden",name!=="gameScreen");$("readingModal").classList.add("hidden");}
+function updateHUD(){$("scoreVal").textContent=score;$("heartsVal").textContent="❤️".repeat(Math.max(0,hearts))+"🤍".repeat(Math.max(0,3-hearts));$("streakVal").classList.toggle("hidden",streak<2);$("streakNum").textContent=streak;$("progressText").textContent=`الكلمة ${Math.min(round+1,gameWords.length)} من ${gameWords.length}`;$("progressBar").style.width=((round)/gameWords.length*100+10)+"%";const m=Math.floor(timeLeft/60),s=timeLeft%60;$("timerVal").textContent=`⏱️ ${m}:${String(s).padStart(2,"0")}`;$("timerVal").classList.toggle("bg-rose-500",timeLeft<=30);$("timerVal").classList.toggle("bg-sky-500",timeLeft>30);$("attemptText").textContent=`محاولاتك: ${attempts}`;}
+function feedback(msg,color="text-slate-500"){$("feedbackText").textContent=msg;$("feedbackText").className=`mt-4 font-black text-lg md:text-xl min-h-[32px] ${color}`;}
+function shakeCard(){$("mainCard").classList.remove("shake");void $("mainCard").offsetWidth;$("mainCard").classList.add("shake");}
+function confetti(){const em=["🎉","⭐","🎊","✨","🌟"];for(let i=0;i<28;i++){const d=document.createElement("div");d.className="confetti";d.textContent=em[Math.floor(Math.random()*em.length)];d.style.left=Math.random()*100+"vw";d.style.animationDelay=(Math.random()*.5)+"s";d.style.fontSize=(20+Math.random()*22)+"px";document.body.appendChild(d);setTimeout(()=>d.remove(),3000);}}
+function colorFor(i){return COLORS[i%COLORS.length];}
+
+// ---------- GAME FLOW ----------
+function startGame(){ensureAudio();gameWords=shuffle(WORDS).slice(0,10);round=0;score=0;hearts=3;streak=0;bestStreak=0;timeLeft=180;learned=[];locked=false;clearInterval(timerId);timerId=setInterval(()=>{timeLeft--;updateHUD();if(timeLeft<=0){clearInterval(timerId);endGame(false,"انتهى الوقت! ⏱️ حاول أسرع في المرة القادمة");}},1000);showScreen("gameScreen");loadRound();}
+function current(){return gameWords[round];}
+function loadRound(){locked=false;hintUsed=false;attempts=0;selected=[];const t=current();$("emojiBig").textContent=t.emoji;pool=shuffle(t.syllables.map((s,i)=>({id:Date.now()+"_"+i+"_"+Math.random(),text:s,used:false})));renderSlots();renderPool();feedback("اختر المقطع الأول... هيا! 💪");updateHUD();}
+function renderPool(){const area=$("poolArea");area.innerHTML="";pool.forEach(tile=>{const b=document.createElement("button");b.className=`tile ${colorFor(pool.indexOf(tile))} text-white text-3xl md:text-4xl font-black w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center ${tile.used?"used":""}`;b.textContent=tile.text;b.onclick=()=>pickTile(tile);area.appendChild(b);});}
+function renderSlots(){const area=$("slotsArea");area.innerHTML="";const t=current();for(let i=0;i<t.syllables.length;i++){const slot=document.createElement("div");slot.className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-4 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center";const sel=selected[i];if(sel){const b=document.createElement("button");b.className=`slot-tile tile ${colorFor(i)} text-white text-3xl md:text-4xl font-black w-full h-full rounded-[14px] flex items-center justify-center`;b.textContent=sel.text;b.title="اضغط لإرجاعه";b.onclick=()=>returnTile(i);slot.appendChild(b);slot.classList.remove("border-dashed","border-slate-300");slot.classList.add("border-transparent","bg-transparent");}else{slot.innerHTML=`<span class="text-2xl font-black text-slate-300">${i+1}</span>`;}area.appendChild(slot);}}
+function pickTile(tile){if(locked||tile.used)return;ensureAudio();sPlace();speak(tile.text,0.75);tile.used=true;selected.push(tile);renderPool();renderSlots();if(selected.length===current().syllables.length)feedback("أحسنت! الآن اضغط «تحقّق» ✅","text-sky-600");else feedback(`أضفت «${tile.text}» ... أكمل المقاطع 🧩`,"text-slate-600");}
+function returnTile(i){if(locked)return;const t=selected[i];if(!t)return;sClick();t.used=false;selected.splice(i,1);renderPool();renderSlots();feedback(`أعدت «${t.text}» إلى المقاطع`);}
+function doUndo(){if(locked||!selected.length)return;sClick();const t=selected.pop();t.used=false;renderPool();renderSlots();feedback("تراجعت خطوة ↩️");}
+function doClear(){if(locked)return;sClick();selected.forEach(t=>t.used=false);selected=[];renderPool();renderSlots();feedback("مسحت كل شيء، ابدأ من جديد! 🧹");}
+function doHint(){if(locked||hintUsed)return;if(score<5){feedback("تحتاج ٥ نقاط على الأقل للتلميح ⭐","text-rose-500");sWrong();return;}const need=current().syllables[0];if(selected.length&&selected[0].text===need){feedback("المقطع الأول صحيح بالفعل! 👍");return;}const tile=pool.find(p=>!p.used&&p.text===need);if(!tile)return;score-=5;hintUsed=true;sPlace();speak(need,0.75);tile.used=true;selected.unshift(tile);renderPool();renderSlots();feedback(`💡 التلميح: المقطع الأول هو «${need}» (-٥ نقاط)`,"text-violet-600");updateHUD();}
+function doListen(){if(!selected.length){feedback("اختر مقطعًا أولًا لسماعه 🔊");return;}let delay=0;selected.forEach(t=>{setTimeout(()=>speak(t.text,0.75),delay);delay+=950;});feedback("🎧 استمع... سَ ... مَ ...","text-sky-600");}
+function checkWord(){if(locked)return;const t=current();if(selected.length<t.syllables.length){feedback(`أكمل كل المقاطع! اخترت ${selected.length} من ${t.syllables.length} 🧩`,"text-amber-600");shakeCard();sWrong();return;}
+ const ok=selected.map(x=>x.text).join("")===t.syllables.join("");
+ if(ok){locked=true;streak++;bestStreak=Math.max(bestStreak,streak);const gained=10+(streak-1)*3;score+=gained;learned.push(t);sCorrect();confetti();updateHUD();openReading(gained);}
+ else{attempts++;streak=0;hearts--;sWrong();shakeCard();updateHUD();if(hearts<=0){setTimeout(()=>endGame(false,"نفدت القلوب! 💔 لا بأس، تعلّم من أخطائك وحاول مجددًا"),600);}else{feedback(`ليست الإجابة الصحيحة 😢 باقي ${hearts} ${hearts===1?"قلب":"قلوب"} — راجع الترتيب وحاول!`,"text-rose-500");}}
+ updateHUD();}
+
+// ---------- READING ----------
+function openReading(gained){$("readEmoji").textContent=current().emoji;$("readWord").textContent=current().word;$("readScoreText").textContent=`+${gained} نقطة! ⭐ سلسلة 🔥 ${streak}`;const area=$("readChips");area.innerHTML="";current().syllables.forEach((s,i)=>{const b=document.createElement("button");b.className=`tile ${colorFor(i)} text-white text-3xl md:text-4xl font-black min-w-[64px] h-16 px-3 rounded-2xl`;b.textContent=s;b.onclick=()=>{sClick();speak(s,0.75);document.querySelectorAll("#readChips .tile").forEach(x=>x.classList.remove("reading-active"));b.classList.add("reading-active");setTimeout(()=>b.classList.remove("reading-active"),900);};area.appendChild(b);});$("readingModal").classList.remove("hidden");setTimeout(()=>speak(current().syllables.join(" ... "),0.8),400);}
+function fullRead(){const chips=[...document.querySelectorAll("#readChips .tile")];chips.forEach(c=>c.classList.remove("reading-active"));let i=0;const step=()=>{if(i>=chips.length){setTimeout(()=>speak(current().word,0.85),300);return;}chips.forEach(c=>c.classList.remove("reading-active"));chips[i].classList.add("reading-active");speak(chips[i].textContent,0.75);i++;setTimeout(step,1000);};step();}
+function nextRound(){$("readingModal").classList.add("hidden");if("speechSynthesis" in window)speechSynthesis.cancel();round++;if(round>=gameWords.length){endGame(true,"");}else loadRound();}
+
+// ---------- END ----------
+function endGame(win,msg){clearInterval(timerId);if("speechSynthesis" in window)speechSynthesis.cancel();if(win)sWin();else sWrong();$("endEmoji").textContent=win?"🏆":"💪";$("endTitle").textContent=win?"بطل القراءة! 🎓":"محاولة شجاعة! 🌟";$("endTitle").className=`text-4xl font-black mt-2 ${win?"text-emerald-600":"text-sky-600"}`;$("endMsg").textContent=win?"لقد قرأت ١٠ كلمات كاملة قراءةً سليمة!":(msg||"واصل التدريب وستصبح أسرع");const stars=win?(hearts===3?3:hearts===2?3:2):(learned.length>=5?1:0);$("endStars").textContent="⭐".repeat(stars)+"🤍".repeat(3-stars);$("finalScore").textContent=score;$("finalHearts").textContent=hearts;$("finalStreak").textContent=bestStreak;const list=$("learnedList");list.innerHTML=learned.length?learned.map(w=>`<span class="bg-white shadow rounded-full px-3 py-1 font-black text-slate-700">${w.emoji} ${w.word}</span>`).join(""):'<span class="font-bold text-slate-400">لم تكمل أي كلمة بعد — العب من جديد!</span>';showScreen("endScreen");if(win)setTimeout(confetti,300);}
+
+// ---------- EVENTS ----------
+$("playBtn").onclick=startGame;
+$("againBtn").onclick=startGame;
+$("menuBtn").onclick=()=>{clearInterval(timerId);showScreen("startScreen");};
+$("checkBtn").onclick=checkWord;
+$("undoBtn").onclick=doUndo;
+$("clearBtn").onclick=doClear;
+$("hintBtn").onclick=doHint;
+$("listenBtn").onclick=doListen;
+$("fullReadBtn").onclick=fullRead;
+$("nextBtn").onclick=nextRound;
+$("howBtn").onclick=()=>{ensureAudio();speak("سَ ... مَ ... كَ ... ة ... سمكة",0.8);feedback&&0;};
+function toggleSound(){soundOn=!soundOn;if(!soundOn&&"speechSynthesis" in window)speechSynthesis.cancel();$("soundToggleStart").textContent=soundOn?"🔊 الصوت: يعمل":"🔇 الصوت: صامت";$("soundToggleGame").textContent=soundOn?"🔊":"🔇";if(soundOn)sClick();}
+$("soundToggleStart").onclick=toggleSound;
+$("soundToggleGame").onclick=toggleSound;
+document.addEventListener("click",ensureAudio,{once:true});
+</script>
+</body>
+</html>
